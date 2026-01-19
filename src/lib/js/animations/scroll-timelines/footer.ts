@@ -1,16 +1,13 @@
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
-import type _ScrollSmoother from "gsap/ScrollSmoother";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
 gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger, SplitText);
 
 export function initFooterTimeline() {
-	const footer = document.querySelector(".footer__section") as HTMLElement;
-	const contact__section = document.querySelector(
-		".contact__section"
-	) as HTMLElement;
+	const footer = document.querySelector('.footer_ection') as HTMLElement;
+	const contact__section = document.querySelector('.contact__section') as HTMLElement;
 
 	if (!contact__section || !footer) return;
 	const footerHeight = footer.offsetHeight;
@@ -20,13 +17,13 @@ export function initFooterTimeline() {
 	const tl = gsap.timeline({
 		scrollTrigger: {
 			trigger: contact__section,
-			start: "bottom bottom",
+			start: 'bottom bottom',
 			end: `+=${totalDuration}`,
 			scrub: true,
 			pin: contact__section,
 			pinSpacing: false,
-			id: "contact-pin-slide",
-		},
+			id: 'contact-pin-slide'
+		}
 	});
 
 	tl.to(
@@ -34,7 +31,7 @@ export function initFooterTimeline() {
 		{
 			duration: footerHeight,
 			y: 0,
-			ease: "none",
+			ease: 'none'
 		},
 		0
 	);
@@ -44,7 +41,7 @@ export function initFooterTimeline() {
 		{
 			duration: slideOutDuration,
 			y: -contact__section.offsetHeight,
-			ease: "none",
+			ease: 'none'
 		},
 		footerHeight
 	);

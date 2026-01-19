@@ -1,310 +1,232 @@
 import gsap from 'gsap';
 
-// Define global types for objects used throughout the script
 interface MousePosition {
 	x: number;
 	y: number;
 }
-
 interface AnimatableProperty {
 	previous: number;
 	current: number;
-	amt: number; // Amount for linear interpolation
+	amt: number;
 }
-
 interface AnimatableProperties {
-	tx: AnimatableProperty;
-	ty: AnimatableProperty;
-	rotation: AnimatableProperty;
-	brightness: AnimatableProperty;
-	[key: string]: AnimatableProperty; // Index signature for iteration
+	[key: string]: AnimatableProperty;
 }
 
-// ----- utils -----
-
-/**
- * Maps a number x from an input range [a, b] to an output range [c, d].
- */
+// --- Utils ---
 const map = (x: number, a: number, b: number, c: number, d: number): number =>
 	((x - a) * (d - c)) / (b - a) + c;
-
-/**
- * Linear interpolation between a and b by amount n.
- */
 const lerp = (a: number, b: number, n: number): number => (1 - n) * a + n * b;
-
-/**
- * Clamps a number to be within a specific range [min, max].
- */
 const clamp = (num: number, min: number, max: number): number =>
 	num <= min ? min : num >= max ? max : num;
 
 /**
- * Gets the mouse position from a MouseEvent.
+ * Main Initialization Function
+ * @param containerSelector - The parent container of the menu items
+ * @param itemSelector - The individual items trigger the hover
  */
-const getMousePos = (ev: MouseEvent): MousePosition => {
-	return {
-		x: ev.clientX,
-		y: ev.clientY
+export function initFloatingImages(
+	containerSelector: string = '.capabilities__section',
+	itemSelector: string = '.floating__image-wrapper'
+) {
+	const menuEl = document.querySelector(containerSelector) as HTMLElement;
+	if (!menuEl) return;
+
+	const menuItemsDOM = menuEl.querySelectorAll(itemSelector);
+	let mousepos: MousePosition = { x: 0, y: 0 };
+	let mousePosCache: MousePosition = { x: 0, y: 0 };
+	let direction: MousePosition = { x: 0, y: 0 };
+
+	// Update global mouse position for this instance
+	const onMouseMove = (ev: MouseEvent) => {
+		mousepos = { x: ev.clientX, y: ev.clientY };
 	};
-};
+	window.addEventListener('mousemove', onMouseMove);
 
-// ----- main menu logic ------
-const menuEl = document.querySelector('.capabilities__section') as HTMLElement;
-const DOM: { el: HTMLElement; menuItems?: NodeListOf<HTMLElement> } = {
-	el: menuEl
-};
-DOM.menuItems = DOM.el.querySelectorAll('.floating__image-wrapper');
+	class MenuItem {
+		private dom: any = {};
+		private animProps: AnimatableProperties;
+		private bounds!: { el: DOMRect; reveal: DOMRect };
+		private firstRAFCycle = false;
+		private requestId?: number;
+		private imageUrl: string;
 
-// ---------- core -----------
-const images: [number, string][] = [];
-DOM.menuItems.forEach((item: Element, index: number) => {
-	const url = item.getAttribute('data-img');
-	if (url) {
-		images.push([index, url]);
-	}
-});
+		constructor(el: HTMLElement, imageUrl: string) {
+			this.dom.el = el;
+			this.imageUrl = imageUrl;
+			this.dom.textInner = el.querySelector('.floating__image-text');
 
-let mousepos: MousePosition = { x: 0, y: 0 };
-// cache the mouse position
-let mousePosCache: MousePosition = { ...mousepos };
-let direction: MousePosition = {
-	x: mousePosCache.x - mousepos.x,
-	y: mousePosCache.y - mousepos.y
-};
+			// Unique properties per item to prevent shared state lag
+			this.animProps = {
+				tx: { previous: 0, current: 0, amt: 0.08 },
+				ty: { previous: 0, current: 0, amt: 0.08 },
+				rotation: { previous: 0, current: 0, amt: 0.08 },
+				brightness: { previous: 1, current: 1, amt: 0.08 }
+			};
 
-// update mouse position when moving the mouse
-window.addEventListener('mousemove', (ev: MouseEvent) => (mousepos = getMousePos(ev)));
-
-// -------
-const animatableProperties: AnimatableProperties = {
-	// translationX
-	tx: { previous: 0, current: 0, amt: 0.08 },
-	// translationY
-	ty: { previous: 0, current: 0, amt: 0.08 },
-	// Rotation angle
-	rotation: { previous: 0, current: 0, amt: 0.08 },
-	// CSS filter (brightness) value
-	brightness: { previous: 1, current: 1, amt: 0.08 }
-};
-
-class MenuItem {
-	private DOM: {
-		el: HTMLElement;
-		textInner: HTMLElement;
-		reveal: HTMLElement;
-		revealInner: HTMLElement;
-		revealImage: HTMLElement;
-	};
-	private inMenuPosition: number;
-	private animatableProperties: AnimatableProperties;
-	private bounds!: { el: DOMRect; reveal: DOMRect };
-	private firstRAFCycle: boolean = false;
-	private requestId: number | undefined;
-	private mouseenterFn: ((ev: MouseEvent) => void) | undefined;
-	private mouseleaveFn: (() => void) | undefined;
-
-	constructor(el: HTMLElement, inMenuPosition: number, animatableProperties: AnimatableProperties) {
-		this.DOM = { el } as any; // Temporary cast, filled in layout
-		this.inMenuPosition = inMenuPosition;
-		this.animatableProperties = animatableProperties;
-
-		const textInner = this.DOM.el.querySelector('.floating__image-text');
-		if (textInner) {
-			this.DOM.textInner = textInner as HTMLElement;
+			this.layout();
+			this.initEvents();
 		}
 
-		this.layout();
-		this.initEvents();
-	}
-	public getTextInner(): HTMLElement {
-		return this.DOM.textInner;
-	}
+		private layout() {
+			this.dom.reveal = document.createElement('div');
+			this.dom.reveal.className = 'hover-reveal';
+			this.dom.revealInner = document.createElement('div');
+			this.dom.revealInner.className = 'hover-reveal__inner';
+			this.dom.revealImage = document.createElement('div');
+			this.dom.revealImage.className = 'hover-reveal__img';
+			this.dom.revealImage.style.backgroundImage = `url(${this.imageUrl})`;
 
-	private layout(): void {
-		// Create the image structure
-		this.DOM.reveal = document.createElement('div');
-		this.DOM.reveal.className = 'hover-reveal';
+			this.dom.revealInner.appendChild(this.dom.revealImage);
+			this.dom.reveal.appendChild(this.dom.revealInner);
+			this.dom.el.appendChild(this.dom.reveal);
+		}
 
-		this.DOM.revealInner = document.createElement('div');
-		this.DOM.revealInner.className = 'hover-reveal__inner';
+		private initEvents() {
+			this.dom.el.addEventListener('mouseenter', () => {
+				this.firstRAFCycle = true;
+				this.showImage();
+				this.loopRender();
+			});
+			this.dom.el.addEventListener('mouseleave', () => {
+				this.stopRendering();
+				this.hideImage();
+			});
+		}
 
-		this.DOM.revealImage = document.createElement('div');
-		this.DOM.revealImage.className = 'hover-reveal__img';
-		this.DOM.revealImage.style.backgroundImage = `url(${images[this.inMenuPosition][1]})`;
-
-		this.DOM.revealInner.appendChild(this.DOM.revealImage);
-		this.DOM.reveal.appendChild(this.DOM.revealInner);
-		this.DOM.el.appendChild(this.DOM.reveal);
-	}
-
-	private calcBounds(): void {
-		this.bounds = {
-			el: this.DOM.el.getBoundingClientRect(),
-			reveal: this.DOM.reveal.getBoundingClientRect()
-		};
-	}
-
-	private initEvents(): void {
-		this.mouseenterFn = () => {
-			this.showImage();
-			this.firstRAFCycle = true;
-			this.loopRender();
-		};
-
-		this.mouseleaveFn = () => {
-			this.stopRendering();
-			this.hideImage();
-		};
-
-		this.DOM.el.addEventListener('mouseenter', this.mouseenterFn);
-		this.DOM.el.addEventListener('mouseleave', this.mouseleaveFn);
-	}
-
-	private showImage(): void {
-		// Restore the GSAP Timeline logic
-		gsap.killTweensOf(this.DOM.revealInner);
-		gsap.killTweensOf(this.DOM.revealImage);
-
-		gsap
-			.timeline({})
-			// Animate the image wrap (revealInner)
-			.to(this.DOM.revealInner, 0.2, {
-				ease: 'Sine.easeOut',
-				startAt: { x: direction.x < 0 ? '-100%' : '100%' },
-				x: '0%',
+		private showImage() {
+			gsap.killTweensOf([this.dom.revealInner, this.dom.revealImage]);
+			const tl = gsap.timeline({
 				onStart: () => {
-					// Show the image element
-					this.DOM.reveal.style.opacity = '1';
-					// Set a high z-index value so image appears on top of other elements
-					gsap.set(this.DOM.el, { zIndex: images.length });
+					this.dom.reveal.style.opacity = '1';
+					gsap.set(this.dom.el, { zIndex: 100 });
 				}
-			})
-			// Animate the image element (revealImage)
-			.to(
-				this.DOM.revealImage,
-				0.2,
+			});
+			tl.to(
+				this.dom.revealInner,
 				{
-					ease: 'Sine.easeOut',
+					duration: 0.2,
+					ease: 'sine.out',
+					startAt: { x: direction.x < 0 ? '-100%' : '100%' },
+					x: '0%'
+				},
+				0
+			).to(
+				this.dom.revealImage,
+				{
+					duration: 0.2,
+					ease: 'sine.out',
 					startAt: { x: direction.x < 0 ? '100%' : '-100%' },
 					x: '0%'
 				},
 				0
-			); // Start image animation at the same time as revealInner
-	}
-
-	private hideImage(): void {
-		// Restore the GSAP Timeline logic
-		gsap.killTweensOf(this.DOM.revealInner);
-		gsap.killTweensOf(this.DOM.revealImage);
-
-		gsap
-			.timeline({
-				onStart: () => {
-					gsap.set(this.DOM.el, { zIndex: 1 });
-				},
-				onComplete: () => {
-					gsap.set(this.DOM.reveal, { opacity: 0 });
-				}
-			})
-			.to(this.DOM.revealInner, 0.2, {
-				ease: 'Sine.easeOut',
-				x: direction.x < 0 ? '100%' : '-100%'
-			})
-			.to(
-				this.DOM.revealImage,
-				0.2,
-				{
-					ease: 'Sine.easeOut',
-					x: direction.x < 0 ? '-100%' : '100%'
-				},
-				0
 			);
-	}
-
-	private loopRender(): void {
-		if (!this.requestId) {
-			this.requestId = requestAnimationFrame(() => this.render());
 		}
-	}
 
-	private stopRendering(): void {
-		if (this.requestId) {
-			window.cancelAnimationFrame(this.requestId);
+		private hideImage() {
+			gsap.killTweensOf([this.dom.revealInner, this.dom.revealImage]);
+			gsap
+				.timeline({
+					onStart: () => gsap.set(this.dom.el, { zIndex: 1 }),
+					onComplete: () => gsap.set(this.dom.reveal, { opacity: 0 })
+				})
+				.to(
+					this.dom.revealInner,
+					{ duration: 0.2, ease: 'sine.out', x: direction.x < 0 ? '100%' : '-100%' },
+					0
+				)
+				.to(
+					this.dom.revealImage,
+					{ duration: 0.2, ease: 'sine.out', x: direction.x < 0 ? '-100%' : '100%' },
+					0
+				);
+		}
+
+		private loopRender() {
+			if (!this.requestId) this.requestId = requestAnimationFrame(() => this.render());
+		}
+
+		private stopRendering() {
+			if (this.requestId) {
+				cancelAnimationFrame(this.requestId);
+				this.requestId = undefined;
+			}
+		}
+
+		private render() {
 			this.requestId = undefined;
+			if (this.firstRAFCycle)
+				this.bounds = {
+					el: this.dom.el.getBoundingClientRect(),
+					reveal: this.dom.reveal.getBoundingClientRect()
+				};
+
+			const mouseDistanceX = clamp(Math.abs(mousePosCache.x - mousepos.x), 0, 100);
+			direction = { x: mousePosCache.x - mousepos.x, y: mousePosCache.y - mousepos.y };
+			mousePosCache = { ...mousepos };
+
+			this.animProps.tx.current =
+				Math.abs(mousepos.x - this.bounds.el.left) - this.bounds.reveal.width / 2;
+			this.animProps.ty.current =
+				Math.abs(mousepos.y - this.bounds.el.top) - this.bounds.reveal.height / 2;
+			this.animProps.rotation.current = this.firstRAFCycle
+				? 0
+				: map(mouseDistanceX, 0, 100, 0, direction.x < 0 ? 60 : -60);
+			this.animProps.brightness.current = this.firstRAFCycle
+				? 1
+				: map(mouseDistanceX, 0, 100, 1, 2);
+
+			for (const key in this.animProps) {
+				this.animProps[key].previous = this.firstRAFCycle
+					? this.animProps[key].current
+					: lerp(
+							this.animProps[key].previous,
+							this.animProps[key].current,
+							this.animProps[key].amt
+						);
+			}
+
+			gsap.set(this.dom.reveal, {
+				x: this.animProps.tx.previous,
+				y: this.animProps.ty.previous,
+				rotation: this.animProps.rotation.previous,
+				filter: `brightness(${this.animProps.brightness.previous})`
+			});
+
+			this.firstRAFCycle = false;
+			this.loopRender();
+		}
+
+		public getTextInner() {
+			return this.dom.textInner;
+		}
+		public destroy() {
+			this.stopRendering();
 		}
 	}
 
-	public render(): void {
-		this.requestId = undefined;
+	// Initialize Items
+	const items: MenuItem[] = [];
+	menuItemsDOM.forEach((el) => {
+		const url = (el as HTMLElement).getAttribute('data-img');
+		if (url) items.push(new MenuItem(el as HTMLElement, url));
+	});
 
-		if (this.firstRAFCycle) {
-			this.calcBounds();
-		}
-
-		// Calculate the mouse distance and direction
-		const mouseDistanceX = clamp(Math.abs(mousePosCache.x - mousepos.x), 0, 100);
-		direction = {
-			x: mousePosCache.x - mousepos.x,
-			y: mousePosCache.y - mousepos.y
-		};
-		mousePosCache = { x: mousepos.x, y: mousepos.y };
-
-		// 1. Calculate new translation (center the image on the mouse relative to the menu item)
-		this.animatableProperties.tx.current =
-			Math.abs(mousepos.x - this.bounds.el.left) - this.bounds.reveal.width / 2;
-		this.animatableProperties.ty.current =
-			Math.abs(mousepos.y - this.bounds.el.top) - this.bounds.reveal.height / 2;
-
-		// 2. Calculate new rotation (based on horizontal mouse velocity/distance)
-		this.animatableProperties.rotation.current = this.firstRAFCycle
-			? 0
-			: map(mouseDistanceX, 0, 100, 0, direction.x < 0 ? 120 : -120);
-
-		// 3. Calculate new brightness (based on horizontal mouse velocity/distance)
-		this.animatableProperties.brightness.current = this.firstRAFCycle
-			? 1
-			: map(mouseDistanceX, 0, 100, 1, 4);
-
-		// Interpolate all animatable properties
-		for (const key in this.animatableProperties) {
-			this.animatableProperties[key].previous = this.firstRAFCycle
-				? this.animatableProperties[key].current
-				: lerp(
-						this.animatableProperties[key].previous,
-						this.animatableProperties[key].current,
-						this.animatableProperties[key].amt
-					);
-		}
-
-		// Set styles using GSAP for optimized property application
-		gsap.set(this.DOM.reveal, {
-			x: this.animatableProperties.tx.previous,
-			y: this.animatableProperties.ty.previous,
-			rotation: this.animatableProperties.rotation.previous,
-			filter: `brightness(${this.animatableProperties.brightness.previous})`
-		});
-
-		this.firstRAFCycle = false;
-		this.loopRender();
-	}
-}
-
-// Initialize MenuItems
-const menuItems: MenuItem[] = [];
-[...(DOM.menuItems as unknown as HTMLElement[])].forEach((item, pos) => {
-	menuItems.push(new MenuItem(item, pos, animatableProperties));
-});
-
-// Function to animate the text inner elements on load
-export function initShowMenuImages(): void {
-	const textInners: HTMLElement[] = menuItems.map((item) => item.getTextInner());
-
+	// Entrance Animation
+	const textInners = items.map((i) => i.getTextInner()).filter(Boolean);
 	gsap.to(textInners, {
 		duration: 1.2,
-		ease: 'expo.easeOut',
+		ease: 'expo.out',
 		startAt: { y: '100%' },
 		y: 0,
-		delay: (pos: number) => pos * 0.06
+		delay: (i) => i * 0.06
 	});
+
+	// Return cleanup function
+	return {
+		destroy: () => {
+			window.removeEventListener('mousemove', onMouseMove);
+			items.forEach((item) => item.destroy());
+		}
+	};
 }

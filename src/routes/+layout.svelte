@@ -1,14 +1,22 @@
 <script lang="ts">
+	import '$lib/scss/styles.scss';
+	import { navigating } from '$app/state';
+
 	import Header from '$lib/components/Header.svelte';
 	import favicon from '$lib/assets/logo.svg';
 	import faviconDark from '$lib/assets/logo-dark.svg';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 
-	import { loadIndex } from '$lib/js/main';
-	// import '$lib/scss/styles.scss';
 	let { children } = $props();
 
-	$effect(() => {
-		loadIndex();
+	let showLoader = $state(true);
+
+	if (navigating)
+		beforeNavigate(() => {
+			showLoader = true;
+		});
+	afterNavigate(() => {
+		showLoader = false;
 	});
 </script>
 
@@ -32,3 +40,9 @@
 		{@render children()}
 	</div>
 </main>
+{#if showLoader}
+	<div id="loader" class="loading__screen">
+		<div id="loader-percent" class="loading__value"></div>
+		<canvas id="loading-matrix" class="loading__background"></canvas>
+	</div>
+{/if}

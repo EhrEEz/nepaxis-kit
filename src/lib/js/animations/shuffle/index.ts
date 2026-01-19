@@ -7,7 +7,8 @@ function shuffleArr<T>(arr: T[]) {
 	type Accumulator = [T[], T[]];
 	return arr.reduce(
 		([a, b]: Accumulator): Accumulator => (
-			b.push(...a.splice((Math.random() * a.length) | 0, 1)), [a, b]
+			b.push(...a.splice((Math.random() * a.length) | 0, 1)),
+			[a, b]
 		),
 		[[...arr], []] as Accumulator
 	)[1];
@@ -21,14 +22,14 @@ export function shuffleText(
 	config: shuffleConfig
 ): ReturnType<typeof setInterval> {
 	const { max_frames = 7, duration = 50 } = config;
-	let textOrig = shuffledEl.textContent || "";
-	let charArr = textOrig.split("");
+	const textOrig = shuffledEl.textContent || '';
+	const charArr = textOrig.split('');
 	let frame = 0;
 
 	const inter = setInterval(() => {
 		if (frame < max_frames) {
-			let charArrShuff = shuffleArr(charArr);
-			shuffledEl.textContent = charArrShuff.join("");
+			const charArrShuff = shuffleArr(charArr);
+			shuffledEl.textContent = charArrShuff.join('');
 			frame++;
 		} else {
 			clearInterval(inter);
@@ -40,19 +41,18 @@ export function shuffleText(
 }
 
 export function handleSingleShuffle(shuffledEl: HTMLElement) {
-	const parentButton: HTMLButtonElement | null =
-		shuffledEl.closest(`[class*="btn-"]`) || null;
+	const parentButton: HTMLButtonElement | null = shuffledEl.closest(`[class*="btn-"]`) || null;
 	if (!parentButton) return;
 
-	const textOrig = shuffledEl.textContent || "";
+	const textOrig = shuffledEl.textContent || '';
 
 	// **1. Layout Shift Prevention (One-time setup)**
 	const originalWidth = shuffledEl.offsetWidth;
 	shuffledEl.style.width = `${originalWidth}px`;
-	shuffledEl.style.display = "inline-block";
+	shuffledEl.style.display = 'inline-block';
 
 	// **2. Mouseover Listener (Start Animation)**
-	parentButton.addEventListener("mouseenter", () => {
+	parentButton.addEventListener('mouseenter', () => {
 		if (intervalMap.has(shuffledEl)) {
 			clearInterval(intervalMap.get(shuffledEl));
 		}
@@ -61,7 +61,7 @@ export function handleSingleShuffle(shuffledEl: HTMLElement) {
 	});
 
 	// **3. Mouseleave Listener (Stop Animation)**
-	parentButton.addEventListener("mouseleave", () => {
+	parentButton.addEventListener('mouseleave', () => {
 		const inter = intervalMap.get(shuffledEl);
 
 		if (inter !== undefined) {
@@ -72,7 +72,6 @@ export function handleSingleShuffle(shuffledEl: HTMLElement) {
 	});
 }
 export function initShuffleButtonHover() {
-	const shuffledEls: NodeListOf<HTMLElement> =
-		document.querySelectorAll(".btn__text");
+	const shuffledEls: NodeListOf<HTMLElement> = document.querySelectorAll('.btn__text');
 	shuffledEls.forEach((shuffledEl) => handleSingleShuffle(shuffledEl));
 }

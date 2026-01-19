@@ -1,11 +1,10 @@
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const cube: HTMLElement | null = document.querySelector(".cube");
-const cubeContainer: HTMLElement | null =
-	document.querySelector(".cube-container");
+let cube: HTMLElement | null;
+let cubeContainer: HTMLElement | null;
 
 // --- Orbit Animation Constants & State ---
 let animationTime = 0;
@@ -88,11 +87,7 @@ function orbitLoop(_time: number, delta: number) {
 	const scrollInfluence = scrollProgress * 100 * SCROLL_DAMPENING_FACTOR;
 
 	// 2. LERP the animation time towards the scroll-dictated position
-	animationTime = gsap.utils.interpolate(
-		animationTime,
-		scrollInfluence,
-		LERP_FACTOR
-	);
+	animationTime = gsap.utils.interpolate(animationTime, scrollInfluence, LERP_FACTOR);
 
 	// 3. Independent Idling / Constant Playback
 	// Advance time only if the offset tween is not active
@@ -147,10 +142,10 @@ const handleInteractionLeave = () => {
 		x: 0,
 		y: 0,
 		duration: 0.5,
-		ease: "power2.out",
+		ease: 'power2.out',
 		onComplete: () => {
 			offsetTween = null;
-		},
+		}
 	});
 };
 
@@ -162,43 +157,50 @@ const handleMouseMove = (event: MouseEvent) => {
 const handleTouchMove = (event: TouchEvent) => {
 	if (!isInteracting || event.touches.length !== 1) return;
 	event.preventDefault();
-	calculateInteractiveRotation(
-		event.touches[0].clientX,
-		event.touches[0].clientY
-	);
+	calculateInteractiveRotation(event.touches[0].clientX, event.touches[0].clientY);
 };
 
 // --- Initialization Function ---
 
-export function initCube() {
-	if (!cubeContainer) {
-		console.error("Cube container not found.");
+export function initCube(
+	mainCube: HTMLElement,
+	container: HTMLElement,
+	detectionTrigger: HTMLElement
+) {
+	if (!mainCube) {
+		console.error('Cube not found.');
 		return;
 	}
+	cube = mainCube;
+	if (!container) {
+		console.error('Cube container not found.');
+		return;
+	}
+	cubeContainer = container;
 
-	cubeContainer.addEventListener("mousemove", handleMouseMove);
-	cubeContainer.addEventListener("mouseenter", handleInteractionEnter);
-	cubeContainer.addEventListener("mouseleave", handleInteractionLeave);
+	cubeContainer.addEventListener('mousemove', handleMouseMove);
+	cubeContainer.addEventListener('mouseenter', handleInteractionEnter);
+	cubeContainer.addEventListener('mouseleave', handleInteractionLeave);
 
 	// 2. Touch Events
-	cubeContainer.addEventListener("touchmove", handleTouchMove, {
-		passive: false,
+	cubeContainer.addEventListener('touchmove', handleTouchMove, {
+		passive: false
 	});
-	cubeContainer.addEventListener("touchstart", handleInteractionEnter, {
-		passive: true,
+	cubeContainer.addEventListener('touchstart', handleInteractionEnter, {
+		passive: true
 	});
-	cubeContainer.addEventListener("touchend", handleInteractionLeave, {
-		passive: true,
+	cubeContainer.addEventListener('touchend', handleInteractionLeave, {
+		passive: true
 	});
 
 	// 3. GSAP ScrollTrigger Setup
 	ScrollTrigger.create({
-		trigger: ".capabilities__section",
-		start: "top bottom",
-		end: "bottom top",
+		trigger: detectionTrigger,
+		start: 'top bottom',
+		end: 'bottom top',
 		onUpdate: (self) => {
 			scrollProgress = self.progress;
-		},
+		}
 	});
 
 	// 4. Start the continuous animation

@@ -1,10 +1,10 @@
-@use "../abstracts/mixins" as *;
-@use "../base/base" as *;
-@use "../abstracts/variables" as *;
-@use "../abstracts/functions" as *;
-@use "../abstracts/interfaces" as *;
-@use "../definitions/color-defs" as *;
-@use "../base/helpers/spacing-helper" as *;
+@use '../abstracts/mixins' as *;
+@use '../base/base' as *;
+@use '../abstracts/variables' as *;
+@use '../abstracts/functions' as *;
+@use '../abstracts/interfaces' as *;
+@use '../definitions/color-defs' as *;
+@use '../base/helpers/spacing-helper' as *;
 
 html,
 body {
@@ -67,6 +67,12 @@ a.link {
 .font-mono {
 	font-family: $code-font-stack;
 }
+.font-bold {
+	font-weight: 700;
+}
+.rounded-image{
+	border-radius: 2em;
+}
 .ascii {
 	&__section {
 		width: 100%;
@@ -97,7 +103,7 @@ a.link {
 	}
 	&__art {
 		color: var(--clr-neutral-500);
-		font-family: "Google Sans Code", monospace;
+		font-family: 'Google Sans Code', monospace;
 		white-space: pre-line;
 		mix-blend-mode: difference;
 
@@ -189,7 +195,7 @@ picture {
 		flex-direction: column;
 		gap: 0.5rem;
 		&:after {
-			content: "";
+			content: '';
 			display: block;
 			inline-size: 1px;
 			block-size: 4rem;
@@ -323,7 +329,8 @@ picture {
 	&__text {
 		.line {
 			color: hsl(from var(--clr-neutral-400) h s l / 20%);
-			background: linear-gradient(to right, var(--clr-neutral-100), var(--clr-neutral-100)) no-repeat;
+			background: linear-gradient(to right, var(--clr-neutral-100), var(--clr-neutral-100))
+				no-repeat;
 			-webkit-background-clip: text;
 			background-clip: text;
 			background-size: 0%;
@@ -337,7 +344,7 @@ picture {
 	position: relative;
 	z-index: 20;
 	&:before {
-		content: "";
+		content: '';
 		position: absolute;
 		z-index: 0;
 		pointer-events: none;

@@ -1,36 +1,30 @@
-import { ASCII_CONTENT as ascii } from "./ascii";
-import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
-let mouseMoveHandler: {
-	(e: MouseEvent): void;
-	(this: Document, ev: MouseEvent): any;
-	(this: Document, ev: MouseEvent): any;
-};
-export function initASCIIAnimations() {
-	const asciiText = document.querySelector(".ascii__art");
-	if (typeof ascii !== "undefined" && asciiText) {
-		asciiText.innerHTML = ascii;
-	} else {
+let mouseMoveHandler: (this: Document, ev: MouseEvent) => void;
+
+export function initASCIIAnimations(asciiText: HTMLElement) {
+	if (asciiText && asciiText.innerHTML === '') {
 		console.error("ASCII text variable 'ascii' is not defined.");
 		return;
 	}
+
 	const MAX_DISTANCE = window.outerWidth > 767 ? 120 : 50; // Maximum distance for effect in pixels
 	const MAX_FONT_WEIGHT = 900;
 	const MIN_FONT_WEIGHT = 100;
 	const THROTTLING_FACTOR = window.outerWidth > 767 ? 2 : 1; // Process only 1/2 of characters per frame
 	const GRID_CELL_SIZE = 250; // Size of the spatial hash grid cell in pixels
 
-	const INACTIVE_COLOR = "hsl(0 0% 38%)";
+	const INACTIVE_COLOR = 'hsl(0 0% 38%)';
 	const ACTIVE_COLOR_HUE = 71; // Base hue for mapping (38% to 71%)
 
 	// --- PRE-CALCULATIONS (Relative to Container) ---
 	const ascii_split = new SplitText(asciiText, {
-		type: "chars,lines",
-		charsClass: "char",
+		type: 'chars,lines',
+		charsClass: 'char'
 	}).chars;
 	const bounds = asciiText.getBoundingClientRect();
 	const containerX = bounds.left + window.scrollX;
@@ -45,7 +39,7 @@ export function initASCIIAnimations() {
 			char: char,
 			x: x,
 			y: y,
-			index: index, // Used for throttling
+			index: index // Used for throttling
 		};
 	});
 
@@ -69,7 +63,7 @@ export function initASCIIAnimations() {
 	// --- END SPATIAL HASHING SETUP ---
 
 	let frameCount = 0;
-	let mm = gsap.matchMedia();
+	const mm = gsap.matchMedia();
 
 	// --- CORE UPDATE FUNCTION (Shared by Desktop & Mobile) ---
 	const processActiveArea = (pointX: number, pointY: number) => {
@@ -77,10 +71,10 @@ export function initASCIIAnimations() {
 
 		// 1. Determine active grid cells (9 cells around the central cell)
 		const activeCellId = getCellId(pointX, pointY);
-		const [centerCol, centerRow] = activeCellId.split("_").map(Number);
+		const [centerCol, centerRow] = activeCellId.split('_').map(Number);
 		const neighborOffsets = [-1, 0, 1];
 
-		let charactersToProcess: {
+		const charactersToProcess: {
 			char: HTMLElement;
 			x: number;
 			y: number;
@@ -119,8 +113,7 @@ export function initASCIIAnimations() {
 				// Font Weight: MAX_FONT_WEIGHT (900) to MIN_FONT_WEIGHT (100)
 				// The ratio goes from 0 to 1 as distance goes 0 to MAX_DISTANCE
 				const weightRatio = 1 - ratio;
-				const fontWeight =
-					MIN_FONT_WEIGHT + weightRatio * (MAX_FONT_WEIGHT - MIN_FONT_WEIGHT);
+				const fontWeight = MIN_FONT_WEIGHT + weightRatio * (MAX_FONT_WEIGHT - MIN_FONT_WEIGHT);
 				finalFontWeight = Math.round(fontWeight);
 
 				// Color: ACTIVE_COLOR_HUE (71) to INACTIVE_COLOR (38)
@@ -132,20 +125,20 @@ export function initASCIIAnimations() {
 			gsap.to(char, {
 				fontWeight: finalFontWeight,
 				duration: 0.3,
-				ease: "power2.out",
-				color: finalColor,
+				ease: 'power2.out',
+				color: finalColor
 			});
 		});
 	};
 
 	// --- Mobile Logic (Locus Animation via rAF) ---
-	mm.add("(max-width:991px)", () => {
+	mm.add('(max-width:991px)', () => {
 		gsap.timeline({
 			scrollTrigger: {
-				trigger: ".ascii__section",
-				start: "top bottom",
-				end: "bottom top",
-				toggleActions: "play pause resume pause",
+				trigger: '.ascii__section',
+				start: 'top bottom',
+				end: 'bottom top',
+				toggleActions: 'play pause resume pause',
 				onEnter: () => {
 					const localCenterX = bounds.width / 2;
 					const localCenterY = bounds.height / 2 + 20;
@@ -169,8 +162,7 @@ export function initASCIIAnimations() {
 						}
 
 						const elapsed = currentTime - startTime;
-						const progress =
-							(elapsed % FULL_LOOP_DURATION) / FULL_LOOP_DURATION;
+						const progress = (elapsed % FULL_LOOP_DURATION) / FULL_LOOP_DURATION;
 						const angle = progress * Math.PI * 2;
 
 						// 3. Elliptical Offsets (X' and Y')
@@ -179,10 +171,8 @@ export function initASCIIAnimations() {
 
 						// 4. Rotation and Translation
 						// Apply rotation matrix to the offsets, then add the center coordinates
-						const pointX =
-							localCenterX + (offsetX * COS_THETA - offsetY * SIN_THETA);
-						const pointY =
-							localCenterY + (offsetX * SIN_THETA + offsetY * COS_THETA);
+						const pointX = localCenterX + (offsetX * COS_THETA - offsetY * SIN_THETA);
+						const pointY = localCenterY + (offsetX * SIN_THETA + offsetY * COS_THETA);
 
 						processActiveArea(pointX, pointY);
 						rAF_id = requestAnimationFrame(animateLocus);
@@ -194,15 +184,15 @@ export function initASCIIAnimations() {
 					return () => {
 						if (rAF_id) cancelAnimationFrame(rAF_id);
 					};
-				},
-			},
+				}
+			}
 		});
 	});
 
 	// --- Desktop Logic (Mouse Move) ---
-	mm.add("(min-width:992px)", () => {
+	mm.add('(min-width:992px)', () => {
 		let rAF_id: number | null = null;
-		let mousePos = { x: 0, y: 0 };
+		const mousePos = { x: 0, y: 0 };
 
 		const updateFontWeights = () => {
 			// Convert World/Page coordinates to Local/Container coordinates
@@ -224,16 +214,16 @@ export function initASCIIAnimations() {
 			}
 		};
 
-		document.addEventListener("mousemove", mouseMoveHandler);
+		document.addEventListener('mousemove', mouseMoveHandler);
 
 		// Cleanup function for matchMedia
 		return () => {
-			document.removeEventListener("mousemove", mouseMoveHandler);
+			document.removeEventListener('mousemove', mouseMoveHandler);
 			if (rAF_id) cancelAnimationFrame(rAF_id);
 		};
 	});
 }
 
 export function destroyASCIIAnimation() {
-	document.removeEventListener("mousemove", mouseMoveHandler);
+	document.removeEventListener('mousemove', mouseMoveHandler);
 }

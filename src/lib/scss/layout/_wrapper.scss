@@ -1,13 +1,11 @@
-@use "../abstracts/mixins" as *;
-@use "../definitions/size-defs" as *;
+@use '../abstracts/mixins' as *;
+@use '../definitions/size-defs' as *;
 
 .content-grid {
 	--padding-inline: 1rem;
 	--content-max-width: 100rem;
 	--breakout-max-width: 115rem;
-	--breakout-size: calc(
-		(var(--breakout-max-width) - var(--content-max-width)) / 2
-	);
+	--breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
 	display: grid;
 	grid-template-columns:
 		[fullwidth-start] minmax(var(--padding-inline), 1fr)

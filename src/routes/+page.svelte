@@ -1,11 +1,18 @@
 <script lang="ts">
-	import heroBackground from '$lib/assets/images/hero-background.png';
+	import ASCII from '$lib/components/ASCII/ASCII.svelte';
 	import ITLTime from '$lib/components/ITLTime/ITLTime.svelte';
+	import Cube from '$lib/components/Cube/Cube.svelte';
+	import { initAnimations } from '$lib/js/animations';
+	import { afterNavigate } from '$app/navigation';
+
+	afterNavigate(() => {
+		initAnimations();
+	});
 </script>
 
 <section
 	class="hero__section full-width content-grid"
-	style={`--background: url(${heroBackground})`}
+	style="--background: url(/images/hero-background.png)"
 	data-section="dark"
 	aria-labelledby="#home-title"
 	id="home-section"
@@ -96,3 +103,772 @@
 		</div>
 	</div>
 </section>
+
+<section
+	class="about__section my-4 my-md-6 mt-xl-9 mb-xl-7 pt-4 pt-md-0"
+	data-section="dark"
+	id="about-section"
+	aria-labelledby="#about-title"
+>
+	<div class="grid-md-row">
+		<h2
+			class="about__title font-mono bold-15 uppercase col-md-2 col-start-lg-5 col-end-lg-7 col-start-2xl-8 mb-2 mb-md-0"
+			id="about-title"
+		>
+			About Us
+		</h2>
+		<div class="about__paragraph paragraph-wrapper col-md-8 col-lg-5 col-2xl-4 neutral-400">
+			<p>
+				Nepaxis Technologies LLC is a UAE-based global technology service provider specializing in
+				high-performance engineering, enterprise system architecture, strategic digital
+				transformation, and future-ready product development. We partner with businesses that demand
+				scalable, secure, and intelligently designed technology infrastructure.
+			</p>
+			<p>
+				We don’t just build digital products - we build long-term assets engineered for growth,
+				performance, and operational excellence
+			</p>
+		</div>
+	</div>
+</section>
+
+<section class="ascii__section full-width content-grid" data-section="dark" aria-hidden="true">
+	<ASCII />
+</section>
+<section class="full-width fs-image relative" data-section="dark">
+	<picture>
+		<source srcset="/images/banner-1.png" media="(min-width:720px)" />
+		<img src="/images/banner-1-m.png" class="work__image" alt="Our Work Images" />
+	</picture>
+</section>
+<section
+	class="capabilities__section bg-neutral-100 full-width content-grid py-7 py-md-8 py-lg-9"
+	data-section="light"
+	id="services-section"
+	aria-labelledby="#services-title"
+>
+	<h2 class="heading-2 neutral-700 mb-2 mb-md-4 services__title" id="services-title">
+		Capabilities
+	</h2>
+	<div class="grid-xl-row gap-3xl-9">
+		<div class="col-xl-8">
+			<table class="capabilities__table--sm regular-14 mb-4">
+				<tbody>
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Design</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Branding & Visual Identity
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								UI/UX Design
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Digital & Print Media
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Development</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Web Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Mobile App Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Software Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Tech Stack Expertise
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600"
+							>Cloud & Data Services</th
+						>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Cloud & AWS Services
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								DevOps & Infrastructure
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Data & Analytics
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Marketing & Growth</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								We execute data-driven marketing strategies that improve visibility, accelerate
+								acquisition, and enhance long-term customer engagement.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Growth Hacking
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Search & Performance Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Social Media Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Content & Brand marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Analytics & Reporting
+							</span>
+						</td>
+					</tr>
+
+					<tr>
+						<th colspan="1" class="text-left uppercase bold-14 neutral-600">Expert Services</th>
+					</tr>
+					<tr>
+						<td class="single-column-description">
+							<p class="neutral-500 regular-14">
+								Our strategic and operational support ensures that every digital initiative is
+								planned, executed, and maintained with precision and clarity.
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="single-column-service">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Consulting & Support
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="capabilities__table--md regular-14 mb-md-4">
+				<tbody>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Design</th>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								We create cohesive brand systems and intuitive digital experiences that elevate how
+								your business is perceived across every touchpoint.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/branding-visual.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Branding & Visual Identity
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/ui-ux-design.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								UI/UX Design
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/digital-print-media.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Digital & Print Media
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Development</th>
+					</tr>
+					<tr>
+						<td rowspan="4">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/web-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Web Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/mobile-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Mobile App Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/software-development.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Software Development
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/expert.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Tech Stack Expertise
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600"
+							>Cloud & Data Services</th
+						>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								Our engineering team builds high-performance digital products using modern
+								frameworks, scalable architecture, and efficient development practices.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/cloud.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Cloud & AWS Services
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/dev-ops.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								DevOps & Infrastructure
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/analytics.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Data & Analytics
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Marketing & Growth</th>
+					</tr>
+					<tr>
+						<td rowspan="5">
+							<p class="neutral-500 regular-14">
+								We execute data-driven marketing strategies that improve visibility, accelerate
+								acquisition, and enhance long-term customer engagement.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/growth-hacking.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Growth Hacking
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/seo.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Search & Performance Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/social-media.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Social Media Marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/content-marketing.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Content & Brand marketing
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="floating__image-wrapper" data-img="/images/service/data-reporting.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Analytics & Reporting
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2" class="text-left uppercase bold-14 neutral-600">Expert Services</th>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<p class="neutral-500 regular-14">
+								Our strategic and operational support ensures that every digital initiative is
+								planned, executed, and maintained with precision and clarity.
+							</p>
+						</td>
+						<td class="floating__image-wrapper" data-img="/images/service/support.png">
+							<span class="font-mono neutral-600 uppercase regular-14 floating__image-text">
+								Consulting & Support
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-xl-4">
+			<div class="capabilities__aside">
+				<div class="brochure__content">
+					<div class="services__paragraph paragraph-wrapper neutral-500 tracking-tight pe-lg-4">
+						<p>
+							You can catch all the details of our servcies by downloading our service brochure
+							below.
+						</p>
+					</div>
+					<a
+						href="https://drive.google.com/uc?export=download&id=1x1kVPoeZaI9VFPjU6xvle9SePYs8-nWH"
+						class="btn--black services__button mb-4 mb-lg-5"
+						target="_blank"
+					>
+						<span class="btn__wrapper">
+							<span class="btn__text">Download Brochure</span>
+							<span class="btn__icon">
+								<svg
+									width="13"
+									height="13"
+									viewBox="0 0 13 13"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M1 10.2915V8.125C1 7.77982 1.27982 7.5 1.625 7.5C1.97018 7.5 2.25 7.77982 2.25 8.125V10.2915C2.25 10.4131 2.29832 10.5298 2.38428 10.6157C2.47023 10.7017 2.58694 10.75 2.7085 10.75H10.2915C10.4131 10.75 10.5298 10.7017 10.6157 10.6157C10.7017 10.5298 10.75 10.4131 10.75 10.2915V8.125C10.75 7.77982 11.0298 7.5 11.375 7.5C11.7202 7.5 12 7.77982 12 8.125V10.2915C12 10.7446 11.8199 11.1791 11.4995 11.4995C11.1791 11.8199 10.7446 12 10.2915 12H2.7085C2.25542 12 1.82086 11.8199 1.50049 11.4995C1.18011 11.1791 1 10.7446 1 10.2915ZM5.875 1.625C5.875 1.27982 6.15482 1 6.5 1C6.84518 1 7.125 1.27982 7.125 1.625V6.61621L8.7666 4.97461C9.01069 4.73069 9.40637 4.73059 9.65039 4.97461C9.89441 5.21863 9.89431 5.61431 9.65039 5.8584L6.94189 8.56689C6.69782 8.81097 6.30218 8.81097 6.05811 8.56689L3.34961 5.8584C3.10569 5.61431 3.10559 5.21863 3.34961 4.97461C3.59363 4.73059 3.98931 4.73069 4.2334 4.97461L5.875 6.61621V1.625Z"
+										fill="currentColor"
+									/>
+								</svg>
+							</span>
+						</span>
+					</a>
+				</div>
+				<Cube />
+			</div>
+		</div>
+	</div>
+</section>
+<section
+	class="window__section full-width"
+	data-section="dark"
+	style="background: url(/images/desktop-background.png)"
+>
+	<div class="window-wrapper">
+		<div class="window window--1">
+			<img src="/images/container/hotel-manager.png" alt="Hotel Manager Window" />
+		</div>
+
+		<div class="window window--2">
+			<img src="/images/container/asset-flow.png" alt="Asset Flow Window" />
+		</div>
+	</div>
+</section>
+<section
+	class="approach__section my-8 mt-md-8 mt-xl-9"
+	data-section="dark"
+	id="approach-section"
+	aria-labelledby="#approach-title"
+>
+	<div class="grid-lg-row mb-2 mb-md-4 mb-md-6">
+		<div class="subtitle__wrapper col-lg-4 col-start-8 order-1">
+			<h2
+				class="bold-15 font-mono uppercase neutral-200 text-right approach__title mb-2 mb-md-0"
+				id="approach-title"
+			>
+				Our Approach
+			</h2>
+		</div>
+		<div class="title__wrapper col-lg-8 order-0 mb-4 mb-md-0">
+			<h3 class="heading-xl approach__text">
+				A Strategic Partner for Modern Digital Transformation
+			</h3>
+		</div>
+	</div>
+	<div class="approach__list-wrapper">
+		<p class="neutral-400 uppercase mb-3 mb-lg-3 approach__subtitle">
+			We follow Agile driven workflows that prioritize:
+		</p>
+		<ul
+			class="approach__list grid grid-template-col-2 grid-template-col-ms-3 grid-template-col-lg-6 gap-1 gap-md-2 gap-lg-1 col-gap-2xl-1 grid-2xl-row strip-style"
+		>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Continuous delivery</div>
+				<img
+					src="/images/approach/CD.svg"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Scalable architecture</div>
+				<img
+					src="/images/approach/SA.png"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Security-by-design</div>
+				<img
+					src="/images/approach/SBD.png"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Transparent collaboration</div>
+				<img
+					src="/images/approach/TC.png"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Data-informed iterations</div>
+				<img
+					src="/images/approach/DII.png"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+			<li class="approach__item col-2xl-2">
+				<div class="uppercase neutral-100 approach__item-text">Long-term maintainability</div>
+				<img
+					src="/images/approach/LTM.png"
+					class="approach__image"
+					alt="Continuous Delivery Illustration"
+				/>
+			</li>
+		</ul>
+	</div>
+</section>
+<section class="full-width mb-0 mb-3xl-4 mb-3xl-9 mt-md-6 mt-xl-9 fs-image" data-section="light">
+	<picture>
+		<img src="/images/bottom-image.png" class="h-full object-cover w-100" alt="Our Work Images" />
+	</picture>
+</section>
+<section
+	class="contact__section pt-8 pt-md-9 pt-xl-10 pb-4 pb-md-8 py-2xl-9 relative"
+	id="contact-section"
+	data-section="dark"
+	aria-labelledby="#contact-title"
+>
+	<div class="content__wrapper relative z-1">
+		<h2 class="heading-2 uppercase mb-4 contact__title" id="contact-title">Let's Talk</h2>
+		<form id="contactForm" class="contact__form mb-lg-9 mb-6 mb-lg-8" method="post">
+			<div class="grid-lg-row gap-lg-3 gap-xl-0">
+				<div class="fl-col row-gap-3 col-gap-2 col-lg-10 col-xl-8 col-2xl-6 mb-3 mb-lg-0">
+					<label for="fullName" class="form__group">
+						<div class="form__line">
+							<div class="form__description regular-25 tracking-4tight neutral-300">
+								My Name is &nbsp;
+							</div>
+							<div class="form__input form--required">
+								<input
+									type="text"
+									class="form__control"
+									name="fullName"
+									id="fullName"
+									placeholder="Full Name"
+									aria-required="true"
+								/>
+								<span class="error-message"></span>
+							</div>
+						</div>
+					</label>
+					<label for="companyName" class="form__group">
+						<div class="form__line">
+							<div class="form__description regular-25 tracking-4tight neutral-300">
+								representing &nbsp;
+							</div>
+							<div class="form__input">
+								<input
+									type="text"
+									class="form__control"
+									name="companyName"
+									id="companyName"
+									placeholder="Company Name"
+								/>
+								<span class="error-message"></span>
+							</div>
+						</div>
+					</label>
+					<label for="email" class="form__group">
+						<div class="form__line">
+							<div class="form__description regular-25 tracking-4tight neutral-300">
+								You can contact me at &nbsp;
+							</div>
+							<div class="form__input form--required">
+								<input
+									type="email"
+									class="form__control"
+									name="email"
+									id="email"
+									placeholder="Email Address"
+									aria-required="true"
+								/>
+								<span class="error-message"></span>
+							</div>
+						</div>
+					</label>
+					<label for="phoneNumber" class="form__group">
+						<div class="form__line">
+							<div class="form__description regular-25 tracking-4tight neutral-300">
+								or call me on &nbsp;&nbsp;
+							</div>
+							<div class="form__input">
+								<input
+									type="tel"
+									class="form__control"
+									name="phoneNumber"
+									id="phoneNumber"
+									placeholder="Phone Number"
+								/>
+								<span class="error-message"></span>
+							</div>
+						</div>
+					</label>
+					<label for="message" class="form__group">
+						<div class="form__line">
+							<div class="form__description regular-25 tracking-4tight neutral-300">
+								And I want to say:&nbsp;&nbsp;
+							</div>
+							<div class="form__input">
+								<textarea
+									name="message"
+									id="message"
+									class="form__control"
+									placeholder="Message"
+									rows="4"
+								></textarea>
+								<span class="error-message"></span>
+							</div>
+						</div>
+					</label>
+				</div>
+				<div
+					class="big__button-wrapper fl-col jc-end w-100 col-lg-4 col-start-xl-9 col-start-2xl-8 col-end-xl-13"
+				>
+					<button class="btn--primary w-100 btn--full" type="submit">
+						<span class="btn__wrapper"><span class="btn__text"> Send Message</span></span>
+					</button>
+				</div>
+			</div>
+		</form>
+		<div class="grid-md-row contact__info">
+			<div class="info-wrapper--left col-md-6 col-lg-7 mb-4 mb-lg-0">
+				<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">Business</h4>
+				<div class="info__body">
+					<div class="mb-2">
+						<a class="link" href="mailto:hi@nepaxis.com">hi@nepaxis.com</a>
+					</div>
+					<div class="mb-2">
+						<a class="link" href="tel:+971 56 144 8979">+971 56 144 8979</a>
+					</div>
+					<address class="uppercase no-italics regular-13 neutral-200">
+						RAG Global Business Hun. <br />
+						Al Qusais 2, 102-36 <br />
+						Dubai, United Arab Emirates <br />
+					</address>
+				</div>
+			</div>
+			<div class="info-wrapper--right col-md-5 ps-md-4 ps-lg-5">
+				<div class="info--careers mb-4 mb-lg-4">
+					<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">Careers</h4>
+					<div class="info__body">
+						<p class="uppercase no-italics regular-13 neutral-200 mb-1">Join us</p>
+						<div>
+							<a class="link" href="mailto:hr@nepaxis.com">hr@nepaxis.com</a>
+						</div>
+					</div>
+				</div>
+				<div class="info--help">
+					<h4 class="medium-15 neutral-100 mb-2 mb-lg-3 uppercase info__title">Help & Support</h4>
+					<div class="info__body">
+						<p class="uppercase no-italics regular-13 neutral-200 mb-1">
+							Do you have a request / Query?
+						</p>
+						<div>
+							<a class="link" href="mailto:support@nepaxis.com">support@nepaxis.com</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<footer
+	class="bg-neutral-100 neutral-700 content-grid full-width py-2 pt-md-2 pt-lg-0 footer__section"
+	data-section="light"
+>
+	<div class="grid-md-row pt-4 pb-2 py-md-5 py-lg-7 ai-center">
+		<div class="col-md-5 col-lg-4">
+			<div class="footer__logo-wrapper mb-4 mb-lg-5">
+				<img src="/logo-dark.svg" alt="Nepaxis Icon" />
+			</div>
+			<h5 class="footer__tagline regular-36 uppercase mb-4 mb-lg-5 me-xl-7">
+				Start your digital transformation with us!
+			</h5>
+			<div class="social__link-wrapper fl-row gap-2 gap-lg-4 mb-4">
+				<a
+					href="https://www.linkedin.com/company/nepaxis/"
+					class="social--linkedin"
+					target="_blank"
+				>
+					<div class="sr-only">Linked In</div>
+				</a>
+				<a href="https://x.com/nepaxis" class="social--x" target="_blank">
+					<div class="sr-only">X</div>
+				</a>
+				<a
+					href="https://www.facebook.com/profile.php?id=61583287982556"
+					class="social--facebook"
+					target="_blank"
+				>
+					<div class="sr-only">Facebook</div>
+				</a>
+				<a href="https://wa.me/971561448979" class="social--whatsapp" target="_blank">
+					<div class="sr-only">Whatsapp</div>
+				</a>
+				<a href="https://www.instagram.com/nepaxis" class="social--instagram" target="_blank">
+					<div class="sr-only">Instagram</div>
+				</a>
+				<!-- <a href="#" class="social--youtube" target="_blank">
+									<div class="sr-only">Youtube</div>
+								</a> -->
+			</div>
+		</div>
+		<div class="col-start-md-7 col-start-lg-7 col-start-2xl-9 col-end-md-13">
+			<div class="fl-md-row jc-md-between gap-4 w-100 mb-5">
+				<h6 class="uppercase leading-120 medium-15 shrink-0 w-md-30 mb-3 mb-md-0">Quick Links</h6>
+				<div class="w-100 grid grid-template-col-2 gap-1 w-lg-70">
+					<a href="#about-section" data-scroll-to="#about-section" class="regular-13 footer__link"
+						>About us</a
+					>
+					<a
+						href="#services-section"
+						class="regular-13 footer__link"
+						data-scroll-to="#services-section">Our Services</a
+					>
+					<a
+						href="#approach-section"
+						class="regular-13 footer__link"
+						data-scroll-to="#approach-section">Our Approach</a
+					>
+					<a
+						href="#contact-section"
+						class="regular-13 footer__link"
+						data-scroll-to="#contact-section">Contact Form</a
+					>
+				</div>
+			</div>
+			<form method="POST" id="newsletter" class="fl-md-row jc-md-between gap-4 w-100 mb-5">
+				<h6 class="uppercase leading-120 medium-15 shrink-0 w-md-30 mb-3 mb-md-0">Newsletter</h6>
+				<div class="w-100">
+					<label for="newsletterEmail" class="form__group mb-2">
+						<div class="form__input">
+							<input
+								type="email"
+								class="form__control inverted"
+								name="newsletterEmail"
+								placeholder="Email Address"
+								id="newsletterEmail"
+							/>
+						</div>
+					</label>
+					<button class="btn--black btn--subscribe" id="newsletterSubmit">
+						<span class="btn__wrapper">
+							<span class="btn__icon"></span><span class="btn__text">Subscribe</span>
+						</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="legal regular-12 font-mono uppercase tracking-wide text-center neutral-400 py-lg-2">
+		Nepaxis Technologies, LLC © <span id="currentYear">2025</span>
+	</div>
+</footer>
