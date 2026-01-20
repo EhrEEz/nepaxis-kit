@@ -27,7 +27,7 @@
 	const customRenderer: RendererObject = {
 		heading({ tokens, depth }): string {
 			const text = this.parser.parseInline(tokens);
-			return `<h${depth === 1 ? 2 : depth}${depth === 1 ? ` class="heading-1 content-element"` : ' class="content-element"'}>${text}</h${depth === 1 ? 2 : depth}>`;
+			return `<h${depth === 1 ? 2 : depth}${depth === 1 ? ` class="heading-${depth} content-element"` : ` class="content-element heading-${depth}"`}>${text}</h${depth === 1 ? 2 : depth}>`;
 		},
 		link({ tokens, href, title }): string {
 			const text = this.parser.parseInline(tokens);
@@ -37,33 +37,21 @@
 		paragraph({ tokens }): string {
 			const text = this.parser.parseInline(tokens);
 			if (text.startsWith('<img')) {
-				return `<p class="content-element content-image">${text}</p>`;
+				return `<p class="content-image">${text}</p>`;
 			}
-			return `<p class="content-element">${text}</p>`;
+			return `<p>${text}</p>`;
 		},
-		list({ ordered, items }): string {
-			const tag = ordered ? 'ol' : 'ul';
-			return `<${tag} class="content-element">${items}</${tag}>`;
-		},
-		listitem({ tokens }): string {
-			const text = this.parser.parseInline(tokens);
-			return `<li class="content-element">${text}</li>`;
-		},
-		blockquote({ tokens }): string {
-			const text = this.parser.parse(tokens);
-			return `<blockquote class="content-element">${text}</blockquote>`;
-		},
-		code({ text, lang }): string {
-			return `<pre class="content-element"><code${lang ? ` class="language-${lang}"` : ''}>${text}</code></pre>`;
-		},
-		codespan({ text }): string {
-			return `<code class="content-element">${text}</code>`;
-		},
+		// list({ ordered, items }): string {
+		// 	// console.log(items);
+		// 	const list_tag = ordered ? 'ol' : 'ul';
+		// 	return `<${list_tag}>${items.map((item) => {
+		// 		console.log(item.text);
+		// 		return this.listitem(item);
+		// 	})}</${list_tag}>`;
+		// },
+
 		image({ href, title, text }): string {
 			return `<img src="${href}" alt="${text}" title="${title || ''}" class="content-element" />`;
-		},
-		table({ header, rows }): string {
-			return `<table class="content-element"><thead>${header}</thead><tbody>${rows}</tbody></table>`;
 		}
 	};
 
@@ -78,6 +66,7 @@
 	let purified_html = $state<string>('');
 	$effect(() => {
 		const dirty = marked.parse(mainData.text) as string;
+		// console.log(dirty);
 		purified_html = DOMPurify.sanitize(dirty);
 	});
 </script>

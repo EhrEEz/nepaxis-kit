@@ -1,13 +1,14 @@
-@use '../abstracts/mixins' as *;
-@use '../base/base' as *;
-@use '../abstracts/interfaces' as *;
-@use '../base/helpers/spacing-helper' as *;
+@use "../abstracts/mixins" as *;
+@use "../base/helpers/type-helper" as *;
+@use "../base/base" as *;
+@use "../abstracts/interfaces" as *;
+@use "../base/helpers/spacing-helper" as *;
 
 .article {
 	&-content {
-		--padding-inline: 10rem;
+		--padding-inline: 1rem;
 		--content-max-width: 60ch;
-		--breakout-max-width: 80ch;
+		--breakout-max-width: 120ch;
 		--breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
 		display: grid;
 		grid-template-columns:
@@ -19,12 +20,41 @@
 			minmax(0, var(--breakout-size))
 			[breakout-end] minmax(var(--padding-inline), 1fr) [fullwidth-end];
 
-		& > p:has(img) {
-			grid-column: image-start / text-end;
+		& > * {
+			grid-column: content-start / breakout-end;
+			margin-block-end: 1rem;
+		}
+		& > .content-image {
+			grid-column: breakout-start / breakout-end;
+
+			img {
+				inline-size: 100%;
+				background-color: white;
+				border-radius: 2rem;
+			}
 		}
 
-		& > p {
-			grid-column: content;
+		& {
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
+				text-transform: unset;
+			}
+		}
+
+		* li > ul {
+			margin-inline-start: 1.5rem;
+		}
+
+		hr {
+			border-color: var(--clr-neutral-600);
+		}
+
+		code {
+			background-color: green;
 		}
 	}
 }
